@@ -17,9 +17,6 @@ print('found', files, '\n')
 labels = ['91k', '200k', '300k', '510k', '1000k']
 labels_int = [91000, 200000, 300000, 510000, 1000000]
 
-# found from the calibration tests
-factor = 3.11e-11
-
 # ----------------------------------------- FIRST GAP DISTANCE ------------------------------------
 first = []
 for i, data in enumerate(files[:5]):
@@ -45,7 +42,7 @@ for i, data in enumerate(files[:5]):
 
 plt.title('0.5mm Oil Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 plt.figure()
 
@@ -74,7 +71,7 @@ for i, data in enumerate(files[5:10]):
 
 plt.title('1.0mm Oil Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 plt.figure()
 
@@ -103,10 +100,10 @@ for i, data in enumerate(files[10:15]):
 
 plt.title('1.5mm Oil Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 
-# run regression on c_totals to get capacitance of the compactor vs internal capacitance
+# run regression on c_totals to get capacitance of the plates vs internal capacitance
 reg = LinearRegression(fit_intercept=True)
 reg.fit(X=np.reciprocal(np.array([0.0005, 0.001, 0.0015])).reshape(-1, 1), y=[np.mean(first), np.mean(second), np.mean(third)])
 slope, internal_capacitance = reg.coef_[0], reg.intercept_
@@ -115,5 +112,5 @@ slope, internal_capacitance = reg.coef_[0], reg.intercept_
 
 # print results and show final plots
 print("Best Estimate of Internal Capacitance C_0: {:.3},".format(internal_capacitance))
-print("Best Estimate of E_0: {:.3},".format(slope / 0.04087))  # area of the plates is 12.5cm ^ 2
+print("Best Estimate of E_Oil: {:.3}".format(slope / 0.04087))  # area of the plates is 12.5cm ^ 2
 plt.show()
