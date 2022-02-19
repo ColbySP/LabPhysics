@@ -42,7 +42,7 @@ for i, data in enumerate(files[:5]):
 
 plt.title('0.5mm Air Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 plt.figure()
 
@@ -71,7 +71,7 @@ for i, data in enumerate(files[5:10]):
 
 plt.title('1mm Air Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 plt.figure()
 
@@ -100,7 +100,7 @@ for i, data in enumerate(files[10:15]):
 
 plt.title('1.5mm Air Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
 plt.figure()
 
@@ -129,20 +129,26 @@ for i, data in enumerate(files[15:20]):
 
 plt.title('2mm Air Gap Trials')
 plt.ylabel('Log-Intensity (V)')
-plt.xlabel('Time (s)')
+plt.xlabel('Time (500 nanoseconds)')
 plt.legend()
+plt.figure()
 
-# run regression on c_totals to get capacitance of the compactor vs internal capacitance
+total_capacitance_values = [np.mean(first), np.mean(second), np.mean(third), np.mean(fourth)]
+
+# run regression on c_totals to get capacitance of the plates vs internal capacitance
 reg = LinearRegression(fit_intercept=True)
-reg.fit(X=np.reciprocal(np.array([0.0005, 0.001, 0.0015, 0.002])).reshape(-1, 1), y=[np.mean(first), np.mean(second), np.mean(third), np.mean(fourth)])
+reg.fit(X=np.reciprocal(np.array([0.0005, 0.001, 0.0015, 0.002])).reshape(-1, 1), y=total_capacitance_values)
 slope, internal_capacitance = reg.coef_[0], reg.intercept_
 
-print(slope)
-print(slope / 0.04087)
-
-# plt.plot(np.reciprocal(np.array([0.0005, 0.001, 0.0015, 0.002])).reshape(-1, 1), [np.mean(first), np.mean(second), np.mean(third), np.mean(fourth)])
+plt.scatter(np.reciprocal(np.array([0.0005, 0.001, 0.0015, 0.002])).reshape(-1, 1), total_capacitance_values, label='Total Capacitance Measurements')
+x_hat = np.linspace(500, 2000, 100)
+plt.plot(x_hat, (x_hat * slope) + internal_capacitance, label='Line Of Best Fit', c='r')
+plt.title('Total Capacitance Measurements & Corresponding Line Of Best Fit')
+plt.xlabel('Distance (1/mm)')
+plt.ylabel('Capacitance (f)')
+plt.legend()
 
 # print results and show final plots
 print("Best Estimate of Internal Capacitance C_0: {:.3},".format(internal_capacitance))
-print("Best Estimate of E_0: {:.3},".format(slope / 0.04087))  # area of the plates is 12.5cm ^ 2
+print("Best Estimate of E_0: {:.3}".format(slope / 0.04087))  # area of the plates is 12.5cm ^ 2
 plt.show()
