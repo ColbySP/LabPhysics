@@ -13,7 +13,8 @@ DIR = 'data/g_lab'
 L = 2.1660
 l = 0.1 / 2
 M = 0.499395
-H = 0.036
+H = 0.018
+d = 0.2743
 
 
 # curve fitting function
@@ -55,11 +56,9 @@ for index, data in enumerate(files[1:]):
     # get variables from the fitting
     a, w, A, phi, c = popt
 
-    # get other important variables for calculation of G
-    d = upper_limit - lower_limit
-
     # calculate G given the new parameters
     G = calc_G(l, d, w, a, H, L, M)
+
     # print("G is calculated to be: {:.5}".format(G))
     G_list.append(G)
 
